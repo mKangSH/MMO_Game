@@ -83,89 +83,35 @@ public class PlayerController : BaseController
         }
     }
 
-    void OnHitEvent()
+public class PlayerController : MonoBehaviour
+{
+    public float _speed = 5.0f;
+    void Start()
     {
-        if(_lockTarget != null)
-        {
-            // TODO
-            Stat targetStat = _lockTarget.GetComponent<Stat>();
-            targetStat.OnAttacked(_stat);
-        }
-
-        if (_stopSkill)
-        {
-            State = Define.State.Idle;
-        }
-
-        else
-        {
-            State = Define.State.Skill;
-        }
+        
     }
 
-    void OnMouseEvent(Define.MouseEvent evt)
+    // deltaTime 은 모든 기기에서 게임 동작 스피드를 같게 하기 위해 곱해줌.
+    void Update()
     {
-        switch(State)
+        if(Input.GetKey(KeyCode.W))
         {
-            case Define.State.Idle:
-                OnMouseEvent_IdleRun(evt);
-                break;
-            case Define.State.Moving:
-                OnMouseEvent_IdleRun(evt);
-                break;
-            case Define.State.Skill:
-                {
-                    if(evt == Define.MouseEvent.PointerUp)
-                    {
-                        _stopSkill = true;
-                    }
-                }
-                break;
+            transform.position += Vector3.up * Time.deltaTime * _speed;
         }
-    }
 
-    void OnMouseEvent_IdleRun(Define.MouseEvent evt)
-    {
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        bool raycastHit = Physics.Raycast(ray, out hit, 100.0f, _raycastMask);
-        // Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
-
-        switch (evt)
+        else if(Input.GetKey(KeyCode.S))
         {
-            case Define.MouseEvent.PointerDown:
-                {
-                    if (raycastHit)
-                    {
-                        _destPos = hit.point;
-                        State = Define.State.Moving;
-                        _stopSkill = false;
+            transform.position += Vector3.down * Time.deltaTime * _speed;
+        }
 
-                        if (hit.collider.gameObject.layer == (int)Define.Layer.Monster)
-                        {
-                            _lockTarget = hit.collider.gameObject;
-                        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            transform.position += Vector3.left * Time.deltaTime * _speed;
+        }
 
-                        else
-                        {
-                            _lockTarget = null;
-                        }
-                    }
-                }
-                break;
-
-            case Define.MouseEvent.Press:
-                {
-                    if (_lockTarget == null && raycastHit)
-                    {
-                        _destPos = hit.point;
-                    }
-                }
-                break;
-
-            case Define.MouseEvent.PointerUp:
-                _stopSkill = true;
-                break;
+        else if(Input.GetKey(KeyCode.D))
+        {
+            transform.position += Vector3.right * Time.deltaTime * _speed;
         }
     }
 }
