@@ -7,12 +7,6 @@ public class Managers : MonoBehaviour
     private static Managers s_instance;
     private static Managers Instance { get { Init(); return s_instance; } }
 
-    #region Contents
-    private GameManagerEx _game = new GameManagerEx();
-
-    public static GameManagerEx Game { get { return Instance._game; } }
-    #endregion
-
     #region Core
     private DataManager _data = new DataManager();
     private InputManager _input = new InputManager();
