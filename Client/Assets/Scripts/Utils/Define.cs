@@ -4,9 +4,18 @@ using UnityEngine;
 
 public class Define
 {
+    public enum MouseEvent
+    {
+        PointerDown,
+        Press,
+        Click,
+        PointerUp
+    }
+
     public enum MoveDir
     {
         None,
+        Idle,
         Up,
         Down,
         Left,

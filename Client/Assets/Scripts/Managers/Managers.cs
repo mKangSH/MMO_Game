@@ -7,6 +7,12 @@ public class Managers : MonoBehaviour
     private static Managers s_instance;
     private static Managers Instance { get { Init(); return s_instance; } }
 
+    #region Contents
+    MapManager _map = new MapManager();
+
+    public static MapManager Map { get { return Instance._map; } }
+    #endregion
+
     #region Core
     private DataManager _data = new DataManager();
     private InputManager _input = new InputManager();
