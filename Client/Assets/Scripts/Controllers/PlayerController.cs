@@ -5,7 +5,7 @@ using static Define;
 
 public class PlayerController : CreatureController
 {
-    KeyCode _prevKey = KeyCode.None;
+    Coroutine _coSkill;
 
     protected override void Init()
     {
@@ -14,7 +14,17 @@ public class PlayerController : CreatureController
 
     protected override void UpdateController()
     {
-        GetDirectionInput();
+        switch (State)
+        {
+            case CreatureState.Idle:
+                GetDirectionInput();
+                GetIdleInput();
+                break;
+            case CreatureState.Moving:
+                GetDirectionInput();
+                break;
+        }
+
         base.UpdateController();
     }
 
@@ -25,7 +35,9 @@ public class PlayerController : CreatureController
 
     void GetDirectionInput()
     {
-        if(State == CreatureState.Moving && Input.GetKey(_prevKey))
+        _dir = MoveDir.None;
+        
+        if (State == CreatureState.Moving)
         {
             return;
         }
@@ -33,34 +45,49 @@ public class PlayerController : CreatureController
         if (Input.GetKey(KeyCode.W))
         {
             //transform.position += Vector3.up * Time.deltaTime * _speed;
-            _prevKey = KeyCode.W;
             Dir = MoveDir.Up;
         }
 
         else if (Input.GetKey(KeyCode.S))
         {
             //transform.position += Vector3.down * Time.deltaTime * _speed;
-            _prevKey = KeyCode.S;
             Dir = MoveDir.Down;
         }
 
         else if (Input.GetKey(KeyCode.A))
         {
             //transform.position += Vector3.left * Time.deltaTime * _speed;
-            _prevKey = KeyCode.A;
             Dir = MoveDir.Left;
         }
 
         else if (Input.GetKey(KeyCode.D))
         {
             //transform.position += Vector3.right * Time.deltaTime * _speed;
-            _prevKey = KeyCode.D;
             Dir = MoveDir.Right;
         }
+    }
 
-        else
+    void GetIdleInput()
+    {
+        if (Input.GetKey(KeyCode.Space))
         {
-            Dir = MoveDir.None;
+            State = CreatureState.Skill;
+            _coSkill = StartCoroutine("CoStartPunch");
         }
+    }
+
+    IEnumerator CoStartPunch()
+    {
+        // 피격 판정 
+        GameObject go = Managers.Object.Find(GetFrontCellPos());
+        if(go != null)
+        {
+            Debug.Log(go.name);
+        }
+
+        // 대기 시간
+        yield return new WaitForSeconds(0.5f);
+        State = CreatureState.Idle;
+        _coSkill = null;
     }
 }

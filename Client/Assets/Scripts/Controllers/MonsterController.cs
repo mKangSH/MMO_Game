@@ -7,7 +7,12 @@ public class MonsterController : CreatureController
 {
     protected override void Init()
     {
+        // base.Init 에서 애니메이터를 연결해주고 
+        // State, Dir 변경 시에 애니메이션 실행이 되니깐 순서 변경은 하지 말아야 한다.
         base.Init();
+
+        State = CreatureState.Idle;
+        Dir = MoveDir.None;
     }
 
     protected override void UpdateController()
@@ -18,7 +23,7 @@ public class MonsterController : CreatureController
     
     void GetDirectionInput()
     {
-        if (State == CreatureState.Moving == true)
+        if (State == CreatureState.Moving && Input.anyKeyDown == true)
         {
             return;
         }

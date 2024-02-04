@@ -29,7 +29,7 @@ public class MapManager
         int x = cellPos.x - MinX;
         int y = MaxY - cellPos.y;
 
-        return !(_collision[y, x]);
+        return (_collision[y, x] == false);
     }
 
     public void LoadMap(int mapId)
