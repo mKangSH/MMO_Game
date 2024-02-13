@@ -8,17 +8,18 @@ public class CreatureController : MonoBehaviour
     public float _speed = 2.0f;
 
     public Vector3Int CellPos { get; set; } = Vector3Int.zero;
+
     protected Animator _animator;
     protected SpriteRenderer _sprite;
+    protected Vector3Int _destPos = Vector3Int.zero;
 
-    CreatureState _state = CreatureState.Idle;
-
+    protected CreatureState _state = CreatureState.Idle;
     public CreatureState State
     {
         get { return _state; }
         set
         {
-            if(_state == value)
+            if (_state == value)
             {
                 return;
             }
@@ -28,9 +29,8 @@ public class CreatureController : MonoBehaviour
         }
     }
 
-    MoveDir _lastDir = MoveDir.None;
+    protected MoveDir _lastDir = MoveDir.None;
     protected MoveDir _dir = MoveDir.None;
-
     public MoveDir Dir
     {
         get { return _dir; }
@@ -43,7 +43,7 @@ public class CreatureController : MonoBehaviour
 
             _dir = value;
 
-            if(value != MoveDir.None)
+            if (value != MoveDir.None)
             {
                 _lastDir = value;
             }
@@ -56,7 +56,7 @@ public class CreatureController : MonoBehaviour
     {
         Vector3Int cellPos = CellPos;
 
-        switch(_lastDir)
+        switch (_lastDir)
         {
             case MoveDir.Up:
                 cellPos += Vector3Int.up;
@@ -82,7 +82,7 @@ public class CreatureController : MonoBehaviour
     {
         if (_state == CreatureState.Idle)
         {
-            switch(_lastDir)
+            switch (_lastDir)
             {
                 case MoveDir.Up:
                     _animator.Play("IDLE_BACK");
@@ -136,7 +136,7 @@ public class CreatureController : MonoBehaviour
             }
         }
 
-        else if (_state == CreatureState.Skill) 
+        else if (_state == CreatureState.Skill)
         {
             switch (_lastDir)
             {
@@ -189,7 +189,7 @@ public class CreatureController : MonoBehaviour
 
     protected virtual void UpdateController()
     {
-        switch(State)
+        switch (State)
         {
             case CreatureState.Idle:
                 UpdateIdle();
@@ -211,36 +211,27 @@ public class CreatureController : MonoBehaviour
 
     protected virtual void UpdateIdle()
     {
-        if (Dir != MoveDir.None)
+        if (_dir != MoveDir.None)
         {
-            Vector3Int destPos = CellPos;
+            _destPos = CellPos;
 
-            switch (Dir)
+            switch (_dir)
             {
                 case MoveDir.Up:
-                    destPos += Vector3Int.up;
+                    _destPos += Vector3Int.up;
                     break;
 
                 case MoveDir.Down:
-                    destPos += Vector3Int.down;
+                    _destPos += Vector3Int.down;
                     break;
 
                 case MoveDir.Left:
-                    destPos += Vector3Int.left;
+                    _destPos += Vector3Int.left;
                     break;
 
                 case MoveDir.Right:
-                    destPos += Vector3Int.right;
+                    _destPos += Vector3Int.right;
                     break;
-            }
-
-            if (Managers.Map.CanGo(destPos))
-            {
-                if (Managers.Object.Find(destPos) == null)
-                {
-                    CellPos = destPos;
-                    State = CreatureState.Moving;
-                }
             }
         }
     }
@@ -271,6 +262,11 @@ public class CreatureController : MonoBehaviour
     }
 
     protected virtual void UpdateDead()
+    {
+
+    }
+
+    public virtual void OnDamaged()
     {
 
     }

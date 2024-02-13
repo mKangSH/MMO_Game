@@ -20,7 +20,7 @@ public class MonsterController : CreatureController
         // GetDirectionInput();
         base.UpdateController();
     }
-    
+
     void GetDirectionInput()
     {
         if (State == CreatureState.Moving && Input.anyKeyDown == true)
@@ -56,5 +56,18 @@ public class MonsterController : CreatureController
         {
             Dir = MoveDir.None;
         }
+    }
+
+    public override void OnDamaged()
+    {
+        base.OnDamaged();
+
+        GameObject effect = Managers.Resource.Instantiate("Effect/DieEffect");
+        effect.transform.position = transform.position;
+        effect.GetComponent<Animator>().Play("START");
+        GameObject.Destroy(effect, 0.5f);
+
+        Managers.Object.Remove(gameObject);
+        Managers.Resource.Destroy(gameObject);
     }
 }
