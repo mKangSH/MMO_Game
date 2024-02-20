@@ -103,27 +103,12 @@ public class PlayerController : CreatureController
         }
     }
 
-    protected override void UpdateIdle()
-    {
-        base.UpdateIdle();
-
-        if (Managers.Map.CanGo(_destPos))
-        {
-            if (Managers.Object.Find(_destPos) == null)
-            {
-                CellPos = _destPos;
-                State = CreatureState.Moving;
-            }
-        }
-    }
-
     protected override void UpdateController()
     {
         switch (State)
         {
             case CreatureState.Idle:
                 GetDirectionInput();
-                GetIdleInput();
                 break;
             case CreatureState.Moving:
                 GetDirectionInput();
@@ -138,15 +123,28 @@ public class PlayerController : CreatureController
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
     }
 
-    void GetDirectionInput()
+    protected override void UpdateIdle()
     {
-        _dir = MoveDir.None;
-        
-        if (State == CreatureState.Moving)
+        base.UpdateIdle();
+
+        // 이동 상태로 갈지 확인
+        if (Dir != MoveDir.None)
         {
+            State = CreatureState.Moving;
             return;
         }
 
+        // 스킬 상태로 갈지 확인
+        if (Input.GetKey(KeyCode.Space))
+        {
+            State = CreatureState.Skill;
+            // _coSkill = StartCoroutine("CoStartPunch");
+            _coSkill = StartCoroutine("CoStartShootArrow");
+        }
+    }
+
+    void GetDirectionInput()
+    {
         if (Input.GetKey(KeyCode.W))
         {
             //transform.position += Vector3.up * Time.deltaTime * _speed;
@@ -170,15 +168,10 @@ public class PlayerController : CreatureController
             //transform.position += Vector3.right * Time.deltaTime * _speed;
             Dir = MoveDir.Right;
         }
-    }
 
-    void GetIdleInput()
-    {
-        if (Input.GetKey(KeyCode.Space))
+        else
         {
-            State = CreatureState.Skill;
-            // _coSkill = StartCoroutine("CoStartPunch");
-            _coSkill = StartCoroutine("CoStartShootArrow");
+            Dir = MoveDir.None;
         }
     }
 
