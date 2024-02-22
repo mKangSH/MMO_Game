@@ -24,8 +24,8 @@ public class GameScene : BaseScene
             // Test :: 랜덤 위치 스폰 (일단 겹쳐도 OK)
             Vector3Int pos = new Vector3Int()
             {
-                x = Random.Range(-20, 20),
-                y = Random.Range(-10, 10)
+                x = Random.Range(-5, 20),
+                y = Random.Range(-5, 15)
             };
 
             MonsterController mc = monster.GetComponent<MonsterController>();
