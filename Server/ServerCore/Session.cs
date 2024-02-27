@@ -81,7 +81,9 @@ namespace ServerCore
         {
             _socket = socket;
             
+            _recvArgs.Completed -= new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
             _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
+            _sendArgs.Completed -= new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
             _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
 
             RegisterRecv();

@@ -10,9 +10,11 @@ public class Managers : MonoBehaviour
     #region Contents
     MapManager _map = new MapManager();
     ObjectManager _obj = new ObjectManager();
+    NetworkManager _network = new NetworkManager();
 
     public static MapManager Map { get { return Instance._map; } }
-    public static ObjectManager Object {  get { return Instance._obj; } } 
+    public static ObjectManager Object { get { return Instance._obj; } } 
+    public static NetworkManager Network {  get { return Instance._network; } }
     #endregion
 
     #region Core
@@ -42,7 +44,8 @@ public class Managers : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _input.OnUpdate();
+        _network.Update();
+        //_input.OnUpdate();
     }
 
     static void Init()
@@ -59,6 +62,7 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(obj);
             s_instance = obj.GetComponent<Managers>();
 
+            s_instance._network.Init();
             s_instance._data.Init();
             s_instance._pool.Init();
             s_instance._sound.Init();
@@ -68,7 +72,7 @@ public class Managers : MonoBehaviour
     public static void Clear()
     {
         // Data의 경우 게임 전체에서 삭제할 필요가 없어서 Clear 안함
-        s_instance._input.Clear();
+        // s_instance._input.Clear();
         s_instance._sound.Clear();
         s_instance._scene.Clear();
         s_instance._ui.Clear();

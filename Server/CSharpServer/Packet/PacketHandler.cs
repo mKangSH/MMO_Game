@@ -1,4 +1,6 @@
-﻿using Server;
+﻿using Google.Protobuf;
+using Google.Protobuf.Protocol;
+using Server;
 using ServerCore;
 using System;
 using System.Collections.Generic;
@@ -8,31 +10,11 @@ using System.Threading.Tasks;
 
 class PacketHandler
 {
-    public static void C_ExitGameHandler(PacketSession session, IPacket packet)
+    public static void C_ChatHandler(PacketSession session, IMessage packet)
     {
-        ClientSession clientSession = session as ClientSession;
-
-        if(clientSession.Room == null)
-        {
-            return;
-        }
-
-        GameRoom room = clientSession.Room;
-        room.Push(() => room.Exit(clientSession));
-    }
-
-    public static void C_MoveHandler(PacketSession session, IPacket packet)
-    {
-        C_Move movePacket = packet as C_Move;
-        ClientSession clientSession = session as ClientSession;
-        
-        if (clientSession.Room == null)
-        {
-            return;
-        }
-        // Console.WriteLine($"[{movePacket.posX}], [{movePacket.posY}], [{movePacket.posZ}]");
-
-        GameRoom room = clientSession.Room;
-        room.Push(() => room.Move(clientSession, movePacket));
+        S_Chat chatPacket = packet as S_Chat;
+        ClientSession serverSession = session as ClientSession;
+ 
+        Console.WriteLine(chatPacket.Context);
     }
 }
