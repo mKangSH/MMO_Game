@@ -15,7 +15,8 @@ public class SceneManagerEx
 
     string GetSceneName(Define.Scene type)
     {
-        return System.Enum.GetName(typeof(Define.Scene), type);
+        string name = System.Enum.GetName(typeof(Define.Scene), type);
+        return name;
     }
 
     public void Clear()

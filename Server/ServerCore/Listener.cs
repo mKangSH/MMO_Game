@@ -24,7 +24,7 @@ namespace ServerCore
 
             // 최대 대기수(10)
             _listenerSocket.Listen(backlog);
-
+            
             for(int i = 0; i < register; i++) 
             {
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs();
@@ -44,7 +44,7 @@ namespace ServerCore
             }
         }
 
-        void OnAcceptCompleted(object? sender, SocketAsyncEventArgs args)
+        void OnAcceptCompleted(object sender, SocketAsyncEventArgs args)
         {
             if(args.SocketError == SocketError.Success)
             {

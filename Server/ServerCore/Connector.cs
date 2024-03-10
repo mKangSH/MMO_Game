@@ -43,7 +43,7 @@ namespace ServerCore
             }
         }
 
-        void OnConnectCompleted(object? sender, SocketAsyncEventArgs args)
+        void OnConnectCompleted(object sender, SocketAsyncEventArgs args)
         {
             if(args.SocketError == SocketError.Success)
             {

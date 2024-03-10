@@ -12,14 +12,6 @@ public class Define
         Dead,
     }
 
-    public enum MouseEvent
-    {
-        PointerDown,
-        Press,
-        Click,
-        PointerUp
-    }
-
     public enum MoveDir
     {
         None,

@@ -17,35 +17,19 @@ public abstract class UI_Base : MonoBehaviour
 
     protected void Bind<T>(Type type) where T : UnityEngine.Object
     {
-        // TODO : type이 Enum이 아닌 경우 어떻게 처리?
         string[] names = Enum.GetNames(type);
         UnityEngine.Object[] objects = new UnityEngine.Object[names.Length];
         _objects.Add(typeof(T), objects);
 
-        if (typeof(T) == typeof(GameObject))
+        for (int i = 0; i < names.Length; i++)
         {
-            for (int i = 0; i < names.Length; i++)
-            {
-                objects[i] = Util.FindChild(gameObject, names[i], recursive: true);
+            if (typeof(T) == typeof(GameObject))
+                objects[i] = Util.FindChild(gameObject, names[i], true);
+            else
+                objects[i] = Util.FindChild<T>(gameObject, names[i], true);
 
-                if (objects[i] == null)
-                {
-                    Debug.Log($"Failed to bind({names[i]})");
-                }
-            }
-        }
-
-        else
-        {
-            for (int i = 0; i < names.Length; i++)
-            {
-                objects[i] = Util.FindChild<T>(gameObject, names[i], recursive: true);
-
-                if (objects[i] == null)
-                {
-                    Debug.Log($"Failed to bind({names[i]})");
-                }
-            }
+            if (objects[i] == null)
+                Debug.Log($"Failed to bind({names[i]})");
         }
     }
 

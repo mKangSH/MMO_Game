@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServerCore
@@ -81,9 +82,7 @@ namespace ServerCore
         {
             _socket = socket;
             
-            _recvArgs.Completed -= new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
             _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
-            _sendArgs.Completed -= new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
             _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
 
             RegisterRecv();
@@ -168,7 +167,7 @@ namespace ServerCore
             }
         }
 
-        void OnSendCompleted(object? sender, SocketAsyncEventArgs args)
+        void OnSendCompleted(object sender, SocketAsyncEventArgs args)
         {
             lock (_lock)
             {
@@ -223,18 +222,18 @@ namespace ServerCore
 
             catch(Exception ex) 
             {
-                Console.WriteLine($"Register Recv Failed : {ex.Message}");
+                Console.WriteLine($"Register Recv Failed : {ex}");
             }
         }
 
-        void OnRecvCompleted(object? sender, SocketAsyncEventArgs args) 
+        void OnRecvCompleted(object sender, SocketAsyncEventArgs args) 
         {
-            if(args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
+            if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
             {
                 try
                 {
                     // Write cursor
-                    if(_recvBuffer.OnWrite(args.BytesTransferred) == false) 
+                    if (_recvBuffer.OnWrite(args.BytesTransferred) == false)
                     {
                         Disconnect();
                         return;
@@ -242,13 +241,13 @@ namespace ServerCore
 
                     // Contents
                     int processLen = OnRecv(_recvBuffer.ReadSegment);
-                    if(processLen < 0 || _recvBuffer.DataSize < processLen)
+                    if (processLen < 0 || _recvBuffer.DataSize < processLen)
                     {
                         Disconnect();
                         return;
                     }
 
-                    if(_recvBuffer.OnRead(processLen) == false)
+                    if (_recvBuffer.OnRead(processLen) == false)
                     {
                         Disconnect();
                         return;
@@ -257,7 +256,7 @@ namespace ServerCore
                     RegisterRecv();
                 }
 
-                catch(Exception ex) 
+                catch (Exception ex)
                 {
                     Console.WriteLine($"OnRecvCompleted Failed {ex}");
                 }
