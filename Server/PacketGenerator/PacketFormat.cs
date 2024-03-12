@@ -32,9 +32,10 @@ public class PacketManager
     Dictionary<ushort, Action<PacketSession, ArraySegment<byte>, ushort>> _onRecv = new Dictionary<ushort, Action<PacketSession, ArraySegment<byte>, ushort>>();
     Dictionary<ushort, Action<PacketSession, IMessage>> _handler = new Dictionary<ushort, Action<PacketSession, IMessage>>();
 
+    public Action<PacketSession, IMessage, ushort> CustomHandler {{ get; set; }}    
+
     public void Register()
-    {{
-        {0}
+    {{{0}
     }}
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
@@ -57,10 +58,18 @@ public class PacketManager
     {{
         T pkt = new T();
 		pkt.MergeFrom(buffer.Array, buffer.Offset + 4, buffer.Count - 4);
-		Action<PacketSession, IMessage> action = null;
-		if (_handler.TryGetValue(id, out action))
+        
+        if (CustomHandler != null)
         {{
-			action.Invoke(session, pkt);
+            CustomHandler.Invoke(session, pkt, id);
+        }}
+        else
+        {{
+		    Action<PacketSession, IMessage> action = null;
+		    if (_handler.TryGetValue(id, out action))
+            {{
+		    	action.Invoke(session, pkt);
+            }}
         }}
     }}
 
@@ -77,7 +86,8 @@ public class PacketManager
 ";
         // {0} : 패킷 이름
         public static string managerRegisterFormat =
-@"_onRecv.Add((ushort)MsgId.{0}, MakePacket<{1}>);
+@"
+        _onRecv.Add((ushort)MsgId.{0}, MakePacket<{1}>);
         _handler.Add((ushort)MsgId.{0}, PacketHandler.{1}Handler);";
     }
 }

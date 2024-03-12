@@ -1,12 +1,12 @@
+using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Define;
 
 public class PlayerController : CreatureController
 {
-    Coroutine _coSkill;
-    bool _rangedSkill = false;
+    protected Coroutine _coSkill;
+    protected bool _rangedSkill = false;
 
     protected override void Init()
     {
@@ -15,7 +15,7 @@ public class PlayerController : CreatureController
 
     protected override void UpdateAnimation()
     {
-        if (_state == CreatureState.Idle)
+        if (State == CreatureState.Idle)
         {
             switch (_lastDir)
             {
@@ -41,7 +41,7 @@ public class PlayerController : CreatureController
             }
         }
 
-        else if (_state == CreatureState.Moving)
+        else if (State == CreatureState.Moving)
         {
             switch (Dir)
             {
@@ -71,7 +71,7 @@ public class PlayerController : CreatureController
             }
         }
 
-        else if (_state == CreatureState.Skill)
+        else if (State == CreatureState.Skill)
         {
             switch (_lastDir)
             {
@@ -105,73 +105,16 @@ public class PlayerController : CreatureController
 
     protected override void UpdateController()
     {
-        switch (State)
-        {
-            case CreatureState.Idle:
-                GetDirectionInput();
-                break;
-            case CreatureState.Moving:
-                GetDirectionInput();
-                break;
-        }
-
         base.UpdateController();
-    }
-
-    private void LateUpdate()
-    {
-        Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
     }
 
     protected override void UpdateIdle()
     {
-        base.UpdateIdle();
-
         // 이동 상태로 갈지 확인
         if (Dir != MoveDir.None)
         {
             State = CreatureState.Moving;
             return;
-        }
-
-        // 스킬 상태로 갈지 확인
-        if (Input.GetKey(KeyCode.Space))
-        {
-            State = CreatureState.Skill;
-            // _coSkill = StartCoroutine("CoStartPunch");
-            _coSkill = StartCoroutine("CoStartShootArrow");
-        }
-    }
-
-    void GetDirectionInput()
-    {
-        if (Input.GetKey(KeyCode.W))
-        {
-            //transform.position += Vector3.up * Time.deltaTime * _speed;
-            Dir = MoveDir.Up;
-        }
-
-        else if (Input.GetKey(KeyCode.S))
-        {
-            //transform.position += Vector3.down * Time.deltaTime * _speed;
-            Dir = MoveDir.Down;
-        }
-
-        else if (Input.GetKey(KeyCode.A))
-        {
-            //transform.position += Vector3.left * Time.deltaTime * _speed;
-            Dir = MoveDir.Left;
-        }
-
-        else if (Input.GetKey(KeyCode.D))
-        {
-            //transform.position += Vector3.right * Time.deltaTime * _speed;
-            Dir = MoveDir.Right;
-        }
-
-        else
-        {
-            Dir = MoveDir.None;
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Server.Game;
 using ServerCore;
 using System;
 using System.Collections.Generic;
@@ -7,12 +8,12 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static Google.Protobuf.Protocol.Person.Types;
 
 namespace Server
 {
-    class ClientSession : PacketSession
+    public class ClientSession : PacketSession
     {
+        public Player MyPlayer { get; set; }
         public int SessionId { get; set; }
 
         public void Send(IMessage packet)
@@ -22,7 +23,7 @@ namespace Server
 
             ushort size = (ushort)packet.CalculateSize();
             byte[] sendBuffer = new byte[size + 4];
-            Array.Copy(BitConverter.GetBytes(size + 4), 0, sendBuffer, 0, sizeof(ushort));
+            Array.Copy(BitConverter.GetBytes((ushort)(size + 4)), 0, sendBuffer, 0, sizeof(ushort));
 
             Array.Copy(BitConverter.GetBytes((ushort)msgId), 0, sendBuffer, 2, sizeof(ushort));
             Array.Copy(packet.ToByteArray(), 0, sendBuffer, 4, size);
@@ -34,13 +35,20 @@ namespace Server
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
+            // 원래라면 온갖 정보를 DB에서 불러와서 Client에 쏴주고 Client에서 응답을 주면 접속 OK
             // PROTO Test
-            S_Chat chat = new S_Chat()
+            MyPlayer = PlayerManager.Instance.Add();
             {
-                Context = "안녕하세요"
-            };
+                MyPlayer.Info.Name = $"Player_{MyPlayer.Info.PlayerId}";
+                MyPlayer.Info.PosInfo.State = CreatureState.Idle;
+                MyPlayer.Info.PosInfo.MoveDir = MoveDir.None;
+                MyPlayer.Info.PosInfo.PosX = 0;
+                MyPlayer.Info.PosInfo.PosY = 0;
 
-            Send(chat);
+                MyPlayer.Session = this;
+            }
+
+            RoomManager.Instance.Find(1).EnterGame(MyPlayer);
         }
 
         public override void OnRecvPacket(ArraySegment<byte> buffer)
@@ -55,6 +63,8 @@ namespace Server
 
         public override void OnDisconnected(EndPoint endPoint)
         {
+            RoomManager.Instance.Find(1).LeaveGame(MyPlayer.Info.PlayerId);
+
             SessionManager.Instance.Remove(this);
 
             Console.WriteLine($"OnDisconnected : {endPoint}");
