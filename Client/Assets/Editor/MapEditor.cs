@@ -15,13 +15,22 @@ public class MapEditor
     [MenuItem("Tools/GenerateMap %#&p")]
     private static void GenerateMap()
     {
+        // Unity
+        GenerateByPath("Assets/Resources/Map");
+
+        // Common
+        GenerateByPath("../Common/MapData");
+    }
+
+    private static void GenerateByPath(string pathPrefix)
+    {
         GameObject[] gameObjects = Resources.LoadAll<GameObject>("Prefabs/Map");
         foreach (GameObject gameObject in gameObjects)
         {
             Tilemap tmBase = Util.FindChild<Tilemap>(gameObject, "Tilemap_Base", true);
             Tilemap tm = Util.FindChild<Tilemap>(gameObject, "Tilemap_Collision", true);
 
-            using (var writer = File.CreateText($"Assets/Resources/Map/{gameObject.name}.txt"))
+            using (var writer = File.CreateText($"{pathPrefix}/{gameObject.name}.txt"))
             {
                 writer.WriteLine(tmBase.cellBounds.xMin);
                 writer.WriteLine(tmBase.cellBounds.xMax);

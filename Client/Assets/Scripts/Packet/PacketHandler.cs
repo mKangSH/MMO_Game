@@ -74,6 +74,7 @@ class PacketHandler
         PlayerController pc = go.GetComponent<PlayerController>();
         if (pc != null)
         {
+            // Direction 추가하여 한 번 다시 동기화 해줘야 할 듯
             pc.UseSkill(skillPacket.Info.SkillId);
         }
     }
