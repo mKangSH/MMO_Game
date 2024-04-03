@@ -1,2 +1,4 @@
 # MMO_Game
-Rookiss님 강의 C# Part.7 Server, Client 연동 구현
+Rookiss님 강의 C# Part.7 Server, Client 연동 구현 실습
+Clone Coding
+
